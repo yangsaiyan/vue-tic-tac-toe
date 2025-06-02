@@ -48,7 +48,7 @@ export const auth = {
             reject(ack.err);
             return;
           }
-          user.recall({ sessionStorage: true }, (sessionAck: any) => {
+          user.recall({ sessionStorage: true }, () => {
             localStorage.setItem("userEmail", email);
             localStorage.setItem("username", email.split("@")[0]);
             resolve("Login successful");
@@ -198,7 +198,7 @@ export const updateRoom = (roomId: string, roomData: any) => {
     .get("test-rooms-ttt")
     .get(roomId)
     .put(JSON.stringify(roomData))
-    .then((room: any) => {
+    .then(() => {
     });
 };
 

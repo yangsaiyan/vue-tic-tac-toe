@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from "vue";
 import {
-  joinRoom,
   leaveRoom,
   updateRoom,
   getRoomUpdates,
@@ -62,7 +61,7 @@ onMounted(async () => {
   });
 });
 
-watch(board, (newVal) => {
+watch(board, () => {
   if (isEnded.value) {
     return;
   }

@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import {
-  user,
-  gun,
   createRoom,
   getRooms,
   joinRoom,
 } from "../../../utils/gunjs";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
-const route = useRoute();
 const username = ref(localStorage.getItem("username") || "");
 
 interface Game {
@@ -39,7 +36,7 @@ onMounted(async () => {
 });
 
 const createGame = async () => {
-  const newGame = createRoom(username.value);
+  await createRoom(username.value);
 };
 
 const joinGame = (roomId: string) => {
