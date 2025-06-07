@@ -147,7 +147,6 @@ const handleClick = (index: number) => {
   if (
     board.round > 9 ||
     !board.status.includes("Game in progress") ||
-    !board.status.includes("Waiting for second player") ||
     board.player1 === "" ||
     board.player2 === ""
   ) {
