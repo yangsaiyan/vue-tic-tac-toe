@@ -3,10 +3,7 @@ import { onMounted, ref } from "vue";
 import { createRoom, getRooms, joinRoom } from "../../../utils/gunjs";
 import { useRouter } from "vue-router";
 
-const router = useRouter();
-const username = ref(localStorage.getItem("username") || "");
-
-interface Game {
+interface RoomData {
   roomId: string;
   player1: string;
   player2: string;
@@ -15,7 +12,10 @@ interface Game {
   status: string;
 }
 
-const waitingGames = ref<Game[]>([]);
+const router = useRouter();
+const username = ref(localStorage.getItem("username") || "");
+
+const waitingGames = ref<RoomData[]>([]);
 
 onMounted(async () => {
   const rooms = await getRooms();
@@ -27,12 +27,18 @@ onMounted(async () => {
   temp.shift();
   let tempFiltered = temp.map((room: any) => JSON.parse(room));
   waitingGames.value = tempFiltered.filter(
-    (room: any) => room.status.trim() === "Waiting for second player"
+    (room: RoomData) => room.status.trim() === "Waiting for second player"
   );
 });
 
 const createGame = async () => {
-  await createRoom(username.value);
+  try {
+    const roomData = await createRoom(username.value);
+    router.push(`/game?gameId=${roomData.roomId.replace("'s room", "")}`);
+  } catch (error) {
+    console.error("Failed to create room:", error);
+    alert("Failed to create room. Please try again.");
+  }
 };
 
 const joinGame = (roomId: string) => {

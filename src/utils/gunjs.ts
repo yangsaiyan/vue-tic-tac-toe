@@ -126,22 +126,36 @@ export const auth = {
   },
 };
 
-export const createRoom = (roomId: string) => {
-  const roomData = {
-    roomId: `${roomId}'s room`,
-    player1: roomId,
-    player2: "",
-    round: 1,
-    cells: ["", "", "", "", "", "", "", "", ""],
-    status: "Waiting for second player",
-  };
-  gun
-    .get("test-rooms-ttt")
-    .get(roomId)
-    .put(JSON.stringify(roomData))
-    .then(() => {
-      window.location.assign(`/game?gameId=${roomId}`);
-    });
+interface RoomData {
+  roomId: string;
+  player1: string;
+  player2: string;
+  round: number;
+  cells: string[];
+  status: string;
+}
+
+export const createRoom = (roomId: string): Promise<RoomData> => {
+  return new Promise((resolve, reject) => {
+    const roomData: RoomData = {
+      roomId: `${roomId}'s room`,
+      player1: roomId,
+      player2: "",
+      round: 1,
+      cells: ["", "", "", "", "", "", "", "", ""],
+      status: "Waiting for second player",
+    };
+    gun
+      .get("test-rooms-ttt")
+      .get(roomId)
+      .put(JSON.stringify(roomData))
+      .then(() => {
+        resolve(roomData);
+      })
+      .catch((error: Error) => {
+        reject(error);
+      });
+  });
 };
 
 export const getRooms = () => {
