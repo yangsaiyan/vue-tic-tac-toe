@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import {
-  createRoom,
-  getRooms,
-  joinRoom,
-} from "../../../utils/gunjs";
+import { createRoom, getRooms, joinRoom } from "../../../utils/gunjs";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -51,15 +47,14 @@ const joinGame = (roomId: string) => {
       <div class="user-info">
         <span>Welcome, {{ username }}</span>
       </div>
-      <h1>Room List</h1>
     </div>
     <div class="room-list">
       <div class="room-item" v-for="game in waitingGames" :key="game.roomId">
-        <span>Room ID: {{ game.roomId }}</span>
+        <span class="room-id">{{ game.roomId }}</span>
         <button @click="joinGame(game.roomId)">Join Game</button>
       </div>
     </div>
-    <button @click="createGame">Create Game</button>
+    <button class="create-game-button" @click="createGame">Create Game</button>
   </div>
 </template>
 
@@ -70,14 +65,15 @@ const joinGame = (roomId: string) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
+  gap: 10px;
+  padding: clamp(10px, 20px, 30px);
+  box-sizing: border-box;
 }
 
 .room-header {
   width: 100%;
   max-width: 600px;
-  padding: 20px;
+  height: fit-content;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -85,7 +81,7 @@ const joinGame = (roomId: string) => {
 }
 
 .user-info {
-  font-size: 1.1em;
+  font-size: clamp(16px, 20px, 24px);
   color: #ffffff;
 }
 
@@ -96,6 +92,9 @@ const joinGame = (roomId: string) => {
   width: clamp(300px, 90%, 600px);
   height: clamp(300px, 90%, 600px);
   background-color: #ffffff;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
 }
 
 .room-item {
@@ -120,5 +119,28 @@ const joinGame = (roomId: string) => {
 
 .room-item button:hover {
   background-color: #45a049;
+}
+
+.create-game-button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 100%;
+  max-width: clamp(300px, 90%, 600px);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-game-button:hover {
+  background-color: #337737;
+}
+
+.room-id {
+  font-size: clamp(24px, 20px, 28px);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>

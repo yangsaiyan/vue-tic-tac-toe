@@ -81,23 +81,63 @@ watch(board, () => {
 });
 
 const checkWin = (cells: string[]): boolean => {
-  if (cells[0] !== "" && cells[0] === cells[1] && cells[1] === cells[2])
+  if (
+    cells[0] !== "" &&
+    cells[0] === cells[1] &&
+    cells[1] === cells[2] &&
+    cells[0] != ""
+  )
     return true;
-  if (cells[3] !== "" && cells[3] === cells[4] && cells[4] === cells[5])
+  if (
+    cells[3] !== "" &&
+    cells[3] === cells[4] &&
+    cells[4] === cells[5] &&
+    cells[3] != ""
+  )
     return true;
-  if (cells[6] !== "" && cells[6] === cells[7] && cells[7] === cells[8])
+  if (
+    cells[6] !== "" &&
+    cells[6] === cells[7] &&
+    cells[7] === cells[8] &&
+    cells[6] != ""
+  )
     return true;
 
-  if (cells[0] !== "" && cells[0] === cells[3] && cells[3] === cells[6])
+  if (
+    cells[0] !== "" &&
+    cells[0] === cells[3] &&
+    cells[3] === cells[6] &&
+    cells[0] != ""
+  )
     return true;
-  if (cells[1] !== "" && cells[1] === cells[4] && cells[4] === cells[7])
+  if (
+    cells[1] !== "" &&
+    cells[1] === cells[4] &&
+    cells[4] === cells[7] &&
+    cells[1] != ""
+  )
     return true;
-  if (cells[2] !== "" && cells[2] === cells[5] && cells[5] === cells[8])
+  if (
+    cells[2] !== "" &&
+    cells[2] === cells[5] &&
+    cells[5] === cells[8] &&
+    cells[2] != ""
+  )
     return true;
 
-  if (cells[0] !== "" && cells[0] === cells[4] && cells[4] === cells[8])
+  if (
+    cells[0] !== "" &&
+    cells[0] === cells[4] &&
+    cells[4] === cells[8] &&
+    cells[0] != ""
+  )
     return true;
-  if (cells[2] !== "" && cells[2] === cells[4] && cells[4] === cells[6])
+  if (
+    cells[2] !== "" &&
+    cells[2] === cells[4] &&
+    cells[4] === cells[6] &&
+    cells[2] != ""
+  )
     return true;
 
   return false;
@@ -107,7 +147,9 @@ const handleClick = (index: number) => {
   if (
     board.round > 9 ||
     board.status.includes("wins") ||
-    board.status.includes("Draw")
+    board.status.includes("Draw") ||
+    board.player1 === "" ||
+    board.player2 === ""
   ) {
     return;
   }
@@ -135,7 +177,12 @@ const handleClick = (index: number) => {
 <template>
   <div class="game-container">
     <div class="game-info">
-      <button @click="leaveRoom(board.roomId, username)">Leave Room</button>
+      <button
+        class="leave-room-button"
+        @click="leaveRoom(board.roomId, username)"
+      >
+        Leave Room
+      </button>
       <div class="game-info-players">
         <div class="game-info-item">
           <p>Player 1</p>
@@ -192,6 +239,7 @@ const handleClick = (index: number) => {
 
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
 }
 
 .game-info {
@@ -235,9 +283,8 @@ const handleClick = (index: number) => {
   grid-template-rows: repeat(3, 1fr);
   justify-items: center;
   align-items: center;
-
-  width: fit-content;
-  height: fit-content;
+  width: min(100%, 600px);
+  aspect-ratio: 1;
   box-sizing: border-box;
   background-color: #ffffffd6;
 }
@@ -245,17 +292,30 @@ const handleClick = (index: number) => {
 .clickable-field {
   border: 1px solid rgb(0, 0, 0);
   cursor: pointer;
-  width: clamp(50px, 150px, 250px);
-  height: clamp(50px, 150px, 250px);
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
-  font-size: 45px;
+  font-size: clamp(20px, 5vw, 45px);
   user-select: none;
 }
 
 .clickable-field:hover {
   background-color: #ffffff;
+}
+
+.leave-room-button {
+  background-color: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.leave-room-button:hover {
+  background-color: #ff0000;
 }
 </style>

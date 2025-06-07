@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { auth } from "../../../utils/gunjs";
 import { useRouter } from "vue-router";
 
@@ -14,10 +14,12 @@ onMounted(async () => {
   await checkAuthStatus();
 });
 
+const isExpanded = ref(true);
+
 const checkAuthStatus = async () => {
   const hasSession = (await auth.checkSession()) as boolean;
-  if (!hasSession && localStorage.getItem('userEmail')) {
-    localStorage.removeItem('userEmail');
+  if (!hasSession && localStorage.getItem("userEmail")) {
+    localStorage.removeItem("userEmail");
     router.push("/authentication");
   }
 };
@@ -25,38 +27,50 @@ const checkAuthStatus = async () => {
 const navigateTo = (path: string) => {
   router.push(path);
 };
+
+const handleExpand = () => {
+  isExpanded.value = !isExpanded.value;
+};
 </script>
 
 <template>
   <div class="navbar-container">
-    <div class="navbar-selection-container">
-      <div
-        class="navbar-selection"
-        :class="{
-          selected:
-            router.currentRoute.value.path === '/' ||
-            router.currentRoute.value.path === '/game',
-        }"
-        @click="navigateTo('/game')"
-      >
-        <p>Game</p>
+    <img
+      :class="{ 'arrow-icon': isExpanded, 'arrow-icon-shrinked': !isExpanded }"
+      src="../../../assets/arrow.svg"
+      alt="arrow"
+      @click="handleExpand"
+    />
+    <div :class="{ 'navbar-cta': isExpanded, 'navbar-cta-off': !isExpanded }">
+      <div class="navbar-selection-container">
+        <div
+          class="navbar-selection"
+          :class="{
+            selected:
+              router.currentRoute.value.path === '/' ||
+              router.currentRoute.value.path === '/game',
+          }"
+          @click="navigateTo('/')"
+        >
+          <p>Game</p>
+        </div>
+        <div
+          class="navbar-selection"
+          :class="{ selected: router.currentRoute.value.path === '/history' }"
+          @click="navigateTo('/history')"
+        >
+          <p>History</p>
+        </div>
       </div>
-      <div
-        class="navbar-selection"
-        :class="{ selected: router.currentRoute.value.path === '/history' }"
-        @click="navigateTo('/history')"
-      >
-        <p>History</p>
-      </div>
+      <button class="logout-button" @click="logout">Logout</button>
     </div>
-    <button class="logout-button" @click="logout">Logout</button>
   </div>
 </template>
 
 <style scoped>
 .navbar-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 
   width: 100%;
@@ -95,13 +109,58 @@ const navigateTo = (path: string) => {
 }
 
 .logout-button {
-  position: absolute;
-  right: 0;
   margin-right: 20px;
   background-color: #1818188e;
   border-radius: 32px;
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+}
+
+.arrow-icon {
+  position: absolute;
+  left: 0;
+  margin-left: 20px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+}
+
+.arrow-icon-shrinked {
+  position: absolute;
+  left: 0;
+  margin-left: 20px;
+  width: 20px;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
+
+  cursor: pointer;
+}
+
+.navbar-cta {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  padding-left: 60px;
+
+  transition: transform 0.5s ease;
+}
+
+.navbar-cta-off {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  padding-left: 60px;
+
+  transform: translateX(-400%);
+  transition: transform 0.5s ease;
 }
 </style>

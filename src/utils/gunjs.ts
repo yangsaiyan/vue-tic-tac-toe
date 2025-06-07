@@ -12,18 +12,6 @@ try {
   });
 
   user = gun.user();
-
-  gun.on("hi", (peer: any) => {
-    console.log("Connected to peer:", peer);
-  });
-
-  gun.get("test").put({ hello: "world" }, (ack: any) => {
-    console.log("Test node creation response:", ack);
-  });
-
-  gun.get("test").once((data: any) => {
-    console.log("Test node data:", data);
-  });
 } catch (error) {
   console.error("GunJS initialization error:", error);
   gun = {
@@ -92,9 +80,15 @@ export const auth = {
     return new Promise((resolve) => {
       try {
         user.leave();
-        localStorage.removeItem("userEmail");
-        localStorage.removeItem("username");
-        resolve("Logged out successfully");
+        user._.sea = null;
+        user._.tag = null;
+        user._.auth = null;
+
+        setTimeout(() => {
+          localStorage.removeItem("userEmail");
+          localStorage.removeItem("username");
+          resolve("Logged out successfully");
+        }, 100);
       } catch (error) {
         resolve("Logout failed");
       }
@@ -105,7 +99,6 @@ export const auth = {
     return new Promise((resolve) => {
       try {
         user.recall({ sessionStorage: true }, (ack: any) => {
-
           user.get("alias", (alias: any) => {
             if (alias) {
               resolve(true);
@@ -195,11 +188,14 @@ export const leaveRoom = (roomId: string, playerId: string) => {
 
 export const updateRoom = (roomId: string, roomData: any) => {
   gun
-    .get("test-rooms-ttt")
-    .get(roomId)
-    .put(JSON.stringify(roomData))
-    .then(() => {
-    });
+  .get("test-rooms-ttt")
+  .get(roomId)
+  .put(
+    JSON.stringify({
+        ...roomData,
+        status: "Game Over",
+      })
+    );
 };
 
 export const getRoomUpdates = (roomId: string) => {
