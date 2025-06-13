@@ -34,8 +34,6 @@ onMounted(async () => {
   const processedRoomId = roomId.replace("'s room", "");
   let tempBoard = await getRoom(processedRoomId);
 
-  console.log("Temp board:", tempBoard);
-
   if (!tempBoard) {
     console.error("Room not found:", processedRoomId);
     return;
@@ -51,13 +49,30 @@ onMounted(async () => {
 
   getRoomUpdates(processedRoomId).on((updatedData: any) => {
     if (!updatedData) return;
-    const parsedData = JSON.parse(updatedData) as Room;
-    board.roomId = parsedData.roomId;
-    board.player1 = parsedData.player1;
-    board.player2 = parsedData.player2;
-    board.round = parsedData.round;
-    board.cells = [...parsedData.cells];
-    board.status = parsedData.status;
+    try {
+      const parsedData =
+        typeof updatedData === "string" ? JSON.parse(updatedData) : updatedData;
+
+      if (!parsedData || typeof parsedData !== "object") {
+        console.error("Invalid room data structure:", parsedData);
+        return;
+      }
+
+      board.roomId = parsedData.roomId;
+      board.player1 = parsedData.player1;
+      board.player2 = parsedData.player2;
+      board.round = parsedData.round;
+      board.status = parsedData.status;
+
+      if (Array.isArray(parsedData.cells)) {
+        board.cells = parsedData.cells;
+      } else {
+        console.error("Invalid cells data:", parsedData.cells);
+        board.cells = ["", "", "", "", "", "", "", "", ""];
+      }
+    } catch (error) {
+      console.error("Error parsing room data:", error);
+    }
   });
 });
 
@@ -68,7 +83,7 @@ watch(board, () => {
 
   if (checkWin(board.cells)) {
     const winner = board.round % 2 === 0 ? "X" : "O";
-    board.status = `${winner} wins!`;
+    board.status = `Game over - ${winner} wins!`;
     alert(`Player ${winner} wins!`);
     updateRoom(board.roomId.replace("'s room", ""), board);
     isEnded.value = true;
@@ -168,6 +183,7 @@ const handleClick = (index: number) => {
     board.round++;
   } else {
     alert("Not your turn");
+    return;
   }
   updateRoom(board.roomId.replace("'s room", ""), board);
 };
@@ -196,34 +212,10 @@ const handleClick = (index: number) => {
         <p>Round</p>
         <p>{{ board.round }}</p>
       </div>
-    </div>
+    </div> 
     <div class="board-container">
-      <div class="clickable-field" @click="handleClick(0)">
-        {{ board.cells[0] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(1)">
-        {{ board.cells[1] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(2)">
-        {{ board.cells[2] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(3)">
-        {{ board.cells[3] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(4)">
-        {{ board.cells[4] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(5)">
-        {{ board.cells[5] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(6)">
-        {{ board.cells[6] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(7)">
-        {{ board.cells[7] }}
-      </div>
-      <div class="clickable-field" @click="handleClick(8)">
-        {{ board.cells[8] }}
+      <div class="clickable-field" v-for="i in 9" :key="i" @click="handleClick(i - 1)">
+        {{ board.cells[i - 1] }}
       </div>
     </div>
   </div>

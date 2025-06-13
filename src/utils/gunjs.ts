@@ -200,16 +200,27 @@ export const leaveRoom = (roomId: string, playerId: string) => {
   window.location.href = "/";
 };
 
-export const updateRoom = (roomId: string, roomData: any) => {
-  gun
-  .get("test-rooms-ttt")
-  .get(roomId)
-  .put(
-    JSON.stringify({
-        ...roomData,
-        status: "Game Over",
-      })
-    );
+export const updateRoom = async (roomId: string, roomData: any) => {
+  try {
+    const updatedRoom = {
+      roomId: roomData.roomId || roomId,
+      player1: roomData.player1 || "",
+      player2: roomData.player2 || "",
+      round: typeof roomData.round === 'number' ? roomData.round : 1,
+      cells: Array.isArray(roomData.cells) ? roomData.cells : ["", "", "", "", "", "", "", "", ""],
+      status: typeof roomData.status === 'string' ? roomData.status : "Game in progress"
+    };
+
+    await gun
+      .get("test-rooms-ttt")
+      .get(roomId)
+      .put(JSON.stringify(updatedRoom));
+    
+    return updatedRoom;
+  } catch (error) {
+    console.error('Error updating room:', error);
+    throw error;
+  }
 };
 
 export const getRoomUpdates = (roomId: string) => {
