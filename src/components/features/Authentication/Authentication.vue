@@ -12,7 +12,6 @@ const formData = reactive({
 
 const checkAuthStatus = async () => {
   const hasSession = await auth.checkSession() as boolean;
-  console.log("hasSession", hasSession);
   if (hasSession) {
     router.push('/');
   }

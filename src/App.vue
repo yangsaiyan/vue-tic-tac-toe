@@ -10,6 +10,7 @@
 <style scoped>
 .app-container {
   min-width: 100dvw;
+  width: 100%;
   height: 100dvh;
   display: flex;
 }

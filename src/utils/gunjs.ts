@@ -63,7 +63,6 @@ export const auth = {
               return;
             }
             user.recall({ sessionStorage: true }, (sessionAck: any) => {
-              console.log("Session stored:", sessionAck);
               localStorage.setItem("userEmail", email);
               localStorage.setItem("username", email.split("@")[0]);
               resolve("Registration successful and logged in");
@@ -230,6 +229,28 @@ export const getRoomUpdates = (roomId: string) => {
     .on((room: any) => {
       if (!room) return;
     });
+};
+
+export const updateHistory = (username: string, history: any) => {
+  return gun.get("users").get(`${username}-tic-tac-toe-test`).put(history);
+};
+
+export const getHistory = async (username: string) => {
+  return new Promise((resolve) => {
+    gun.get("users").get(`${username}-tic-tac-toe-test`).once((data: unknown) => {
+      if (!data) {
+        resolve([]);
+        return;
+      }
+      try {
+        const history = typeof data === 'string' ? JSON.parse(data) : data;
+        resolve(Array.isArray(history) ? history : []);
+      } catch (error) {
+        console.error('Error parsing history:', error);
+        resolve([]);
+      }
+    });
+  });
 };
 
 export { gun, user };

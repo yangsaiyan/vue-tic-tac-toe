@@ -5,6 +5,8 @@ import {
   updateRoom,
   getRoomUpdates,
   getRoom,
+  getHistory,
+  updateHistory,
 } from "../../../utils/gunjs";
 import { useRoute } from "vue-router";
 
@@ -87,13 +89,38 @@ watch(board, () => {
     alert(`Player ${winner} wins!`);
     updateRoom(board.roomId.replace("'s room", ""), board);
     isEnded.value = true;
+    updateCurrentHistory();
   } else if (board.cells.every((cell) => cell !== "")) {
     board.status = "Game over - Draw!";
     alert("Game over - Draw!");
     updateRoom(board.roomId.replace("'s room", ""), board);
     isEnded.value = true;
+    updateCurrentHistory();
   }
 });
+
+const updateCurrentHistory = async () => {
+  try {
+    const history: any = await getHistory(username);
+    
+    if (board.status.includes("Game over")) {
+      const newHistory = {
+        id: history.length + 1 || 1,
+        player1: board.player1,
+        player2: board.player2,
+        cells: board.cells,
+        status: board.status,
+        winner: board.status.includes("Draw") ? "" : board.round % 2 === 0 ? board.player1 : board.player2,
+        date: new Date().toISOString(),
+      };
+
+      const updatedHistory = Array.isArray(history) ? [...history, newHistory] : [newHistory];
+      await updateHistory(username, JSON.stringify(updatedHistory));
+    }
+  } catch (error) {
+    console.error('Error updating history:', error);
+  }
+};
 
 const checkWin = (cells: string[]): boolean => {
   if (
@@ -212,9 +239,14 @@ const handleClick = (index: number) => {
         <p>Round</p>
         <p>{{ board.round }}</p>
       </div>
-    </div> 
+    </div>
     <div class="board-container">
-      <div class="clickable-field" v-for="i in 9" :key="i" @click="handleClick(i - 1)">
+      <div
+        class="clickable-field"
+        v-for="i in 9"
+        :key="i"
+        @click="handleClick(i - 1)"
+      >
         {{ board.cells[i - 1] }}
       </div>
     </div>
@@ -231,6 +263,7 @@ const handleClick = (index: number) => {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+  transition: transform 0.3s ease-in-out;
 }
 
 .game-info {

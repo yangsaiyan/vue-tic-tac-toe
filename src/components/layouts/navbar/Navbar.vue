@@ -73,7 +73,7 @@ const handleExpand = () => {
   justify-content: flex-start;
   align-items: center;
 
-  width: 100%;
+  width: fit-content;
   height: fit-content;
   padding-top: 20px;
 }
@@ -147,8 +147,10 @@ const handleExpand = () => {
   align-items: center;
   gap: 20px;
   padding-left: 60px;
+  overflow: scroll;
 
   transition: transform 0.5s ease;
+  overflow: hidden;
 }
 
 .navbar-cta-off {
@@ -160,7 +162,7 @@ const handleExpand = () => {
   gap: 20px;
   padding-left: 60px;
 
-  transform: translateX(-400%);
+  transform: translateX(-200%);
   transition: transform 0.5s ease;
 }
 </style>
