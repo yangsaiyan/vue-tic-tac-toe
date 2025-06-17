@@ -15,6 +15,11 @@ const logout = async () => {
 };
 
 onMounted(async () => {
+  if (!localStorage.getItem("username")) {
+    await auth.logout();
+    router.push("/authentication");
+  }
+
   try {
     await checkAuthStatus();
   } catch (error) {
@@ -22,8 +27,6 @@ onMounted(async () => {
     await auth.logout();
     router.push("/authentication");
   }
-
-
 });
 
 const isExpanded = ref(true);
