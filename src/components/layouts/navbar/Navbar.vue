@@ -22,13 +22,15 @@ onMounted(async () => {
     await auth.logout();
     router.push("/authentication");
   }
+
+
 });
 
 const isExpanded = ref(true);
 
 const checkAuthStatus = async () => {
   const hasSession = await auth.checkSession();
-  if (!hasSession && localStorage.getItem("userEmail")) {
+  if (!hasSession || !localStorage.getItem("userEmail")) {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("username");
     await router.push("/authentication");
