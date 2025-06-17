@@ -62,7 +62,7 @@ export const auth = {
               reject(authAck.err);
               return;
             }
-            user.recall({ sessionStorage: true }, (sessionAck: any) => {
+            user.recall({ sessionStorage: true }, () => {
               localStorage.setItem("userEmail", email);
               localStorage.setItem("username", email.split("@")[0]);
               resolve("Registration successful and logged in");
@@ -145,7 +145,7 @@ export const createRoom = (roomId: string): Promise<RoomData> => {
       status: "Waiting for second player",
     };
     gun
-      .get("test-rooms-ttt")
+      .get("tic-tac-toe-vue-yangsaiyan")
       .get(roomId)
       .put(JSON.stringify(roomData))
       .then(() => {
@@ -158,7 +158,7 @@ export const createRoom = (roomId: string): Promise<RoomData> => {
 };
 
 export const getRooms = () => {
-  return gun.get("test-rooms-ttt").once((roomsGraph: any) => {
+  return gun.get("tic-tac-toe-vue-yangsaiyan").once((roomsGraph: any) => {
     return roomsGraph;
   });
 };
@@ -166,7 +166,7 @@ export const getRooms = () => {
 export const getRoom = (roomId: string) => {
   return new Promise((resolve) => {
     gun
-      .get("test-rooms-ttt")
+      .get("tic-tac-toe-vue-yangsaiyan")
       .get(roomId)
       .once((room: any) => {
         resolve(room);
@@ -182,7 +182,7 @@ export const joinRoom = async (roomId: string, playerId: string) => {
   }
 
   gun
-    .get("test-rooms-ttt")
+    .get("tic-tac-toe-vue-yangsaiyan")
     .get(roomId)
     .put(
       JSON.stringify({
@@ -211,7 +211,7 @@ export const updateRoom = async (roomId: string, roomData: any) => {
     };
 
     await gun
-      .get("test-rooms-ttt")
+      .get("tic-tac-toe-vue-yangsaiyan")
       .get(roomId)
       .put(JSON.stringify(updatedRoom));
     
@@ -224,7 +224,7 @@ export const updateRoom = async (roomId: string, roomData: any) => {
 
 export const getRoomUpdates = (roomId: string) => {
   return gun
-    .get("test-rooms-ttt")
+    .get("tic-tac-toe-vue-yangsaiyan")
     .get(roomId)
     .on((room: any) => {
       if (!room) return;
@@ -232,12 +232,12 @@ export const getRoomUpdates = (roomId: string) => {
 };
 
 export const updateHistory = (username: string, history: any) => {
-  return gun.get("users").get(`${username}-tic-tac-toe-test`).put(history);
+  return gun.get("users").get(`${username}-tic-tac-toe-yangsaiyan`).put(history);
 };
 
 export const getHistory = async (username: string) => {
   return new Promise((resolve) => {
-    gun.get("users").get(`${username}-tic-tac-toe-test`).once((data: unknown) => {
+    gun.get("users").get(`${username}-tic-tac-toe-yangsaiyan`).once((data: unknown) => {
       if (!data) {
         resolve([]);
         return;
