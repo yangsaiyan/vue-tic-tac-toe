@@ -5,22 +5,33 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const logout = () => {
-  auth.logout();
-  router.push("/authentication");
+const logout = async () => {
+  try {
+    await auth.logout();
+    router.push("/authentication");
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
 };
 
 onMounted(async () => {
-  await checkAuthStatus();
+  try {
+    await checkAuthStatus();
+  } catch (error) {
+    console.error("Auth check failed:", error);
+    await auth.logout();
+    router.push("/authentication");
+  }
 });
 
 const isExpanded = ref(true);
 
 const checkAuthStatus = async () => {
-  const hasSession = (await auth.checkSession()) as boolean;
+  const hasSession = await auth.checkSession();
   if (!hasSession && localStorage.getItem("userEmail")) {
     localStorage.removeItem("userEmail");
-    router.push("/authentication");
+    localStorage.removeItem("username");
+    await router.push("/authentication");
   }
 };
 

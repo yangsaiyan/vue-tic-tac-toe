@@ -97,24 +97,24 @@ export const auth = {
   checkSession: () => {
     return new Promise((resolve) => {
       try {
+        if (!user || !user._) {
+          resolve(false);
+          return;
+        }
+
         user.recall({ sessionStorage: true }, (ack: any) => {
-          user.get("alias", (alias: any) => {
-            if (alias) {
-              resolve(true);
-              return;
-            }
-
-            if (ack?.put?.alias) {
-              resolve(true);
-              return;
-            }
-
-            if (ack?.sea?.pub) {
-              resolve(true);
-              return;
-            }
-
+          if (!ack) {
             resolve(false);
+            return;
+          }
+
+          if (ack.put?.alias || ack.sea?.pub) {
+            resolve(true);
+            return;
+          }
+
+          user.get("alias", (alias: any) => {
+            resolve(!!alias);
           });
         });
       } catch (error) {
